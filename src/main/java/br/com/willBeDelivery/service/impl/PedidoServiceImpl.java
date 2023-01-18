@@ -39,12 +39,13 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
-    public Pedido atualizar(long id, PedidoDTO pedidoDTO) {
-        Optional<Pedido> pedidoBd = pedidoRepository.findById(id);
-        if (pedidoBd.isPresent()){
-           return salvarPedido(pedidoDTO);
-        }
-        return null;
+    public Pedido atualizar(long id, StatusEntrega statusEntrega, PedidoDTO pedidoDTO) {
+        Pedido pedidoBd = pedidoRepository.findById(id).orElse(null);
+        if (pedidoBd == null) {return null;}
+        pedidoBd.setDetinatario(pedidoDTO.getDestinatario());
+        pedidoBd.setStatusEntrega(statusEntrega);
+        pedidoBd.setEnderecoEntrega(getEndereco(pedidoBd.getEnderecoEntrega().getCep()));
+        return pedidoRepository.save(pedidoBd);
     }
 
     @Override
@@ -65,14 +66,19 @@ public class PedidoServiceImpl implements PedidoService {
     private Pedido salvarPedido(PedidoDTO pedidoDTO){
         Pedido pedido = new Pedido();
         String cep = pedidoDTO.getEnderecoDTO().getCep();
+        Endereco endereco = getEndereco(cep);
+        pedido.setDetinatario(pedidoDTO.getDestinatario());
+        pedido.setEnderecoEntrega(endereco);
+        pedido.setStatusEntrega(StatusEntrega.RECEBIDO);
+       return pedidoRepository.save(pedido);
+    }
+
+    private Endereco getEndereco(String cep) {
         Endereco endereco = enderecoRepository.findById(cep).orElseGet(() -> {
             Endereco novoEndereco = viaCepService.consultarCep(cep);
             enderecoRepository.save(novoEndereco);
             return novoEndereco;
         });
-        pedido.setDetinatario(pedidoDTO.getDestinatario());
-        pedido.setEnderecoEntrega(endereco);
-        pedido.setStatusEntrega(StatusEntrega.RECEBIDO);
-       return pedidoRepository.save(pedido);
+        return endereco;
     }
 }

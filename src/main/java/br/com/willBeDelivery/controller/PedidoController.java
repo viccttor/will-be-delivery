@@ -20,8 +20,8 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.buscarTodos());
     }
 
-    @GetMapping("/buscarPedido/{id}")
-    public ResponseEntity<Pedido> buscarPorId(@PathVariable Long id) {
+    @GetMapping("/buscarPedido")
+    public ResponseEntity<Pedido> buscarPorId(@RequestParam Long id) {
         return ResponseEntity.ok(pedidoService.buscarPorId(id));
     }
 
@@ -30,18 +30,18 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.inserir(pedidoDTO));
     }
 
-    @PutMapping("/atualizarPedido/{id}")
-    public ResponseEntity<Pedido> atualizar(@PathVariable Long id, @RequestBody PedidoDTO pedidoDTO) {
-        return ResponseEntity.ok(pedidoService.atualizar(id, pedidoDTO));
+    @PutMapping("/atualizarPedido")
+    public ResponseEntity<Pedido> atualizar(@RequestParam Long id, @RequestParam StatusEntrega statusEntrega, @RequestBody PedidoDTO pedidoDTO) {
+        return ResponseEntity.ok(pedidoService.atualizar(id, statusEntrega, pedidoDTO));
     }
 
-    @PatchMapping("/atualizarStatusEntrega/{id}")
-    public ResponseEntity<Pedido> atualizarStatusEntrega(@PathVariable Long id, @RequestBody StatusEntrega status){
+    @PatchMapping("/atualizarStatusEntrega")
+    public ResponseEntity<Pedido> atualizarStatusEntrega(@RequestParam Long id, @RequestParam StatusEntrega status){
         return ResponseEntity.ok(pedidoService.atualizarStatusEntrega(id, status));
     }
 
-    @DeleteMapping("/deletarPedido/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    @DeleteMapping("/deletarPedido")
+    public ResponseEntity<Void> deletar(@RequestParam Long id) {
         pedidoService.deletar(id);
         return ResponseEntity.ok().build();
     }

@@ -10,7 +10,7 @@ public interface PedidoService {
     Iterable<Pedido> buscarTodos();
     Pedido buscarPorId(long id);
     Pedido inserir(PedidoDTO pedidoDTO);
-    Pedido atualizar(long id, PedidoDTO pedidoDTO);
+    Pedido atualizar(long id, StatusEntrega status, PedidoDTO pedidoDTO);
     Pedido atualizarStatusEntrega(long id, StatusEntrega status);
     void deletar(Long id);
 }
