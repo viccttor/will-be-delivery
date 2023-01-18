@@ -1,17 +1,20 @@
-package br.com.willBeDelivery.service;
+package br.com.willBeDelivery.service.impl;
 
+import br.com.willBeDelivery.dto.PedidoDTO;
 import br.com.willBeDelivery.model.Endereco;
 import br.com.willBeDelivery.model.Pedido;
 import br.com.willBeDelivery.repository.EnderecoRepository;
 import br.com.willBeDelivery.repository.PedidoRepository;
+import br.com.willBeDelivery.service.PedidoService;
+import br.com.willBeDelivery.model.StatusEntrega;
+import br.com.willBeDelivery.service.ViaCepService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class PedidoServiceImpl implements PedidoService{
-
+public class PedidoServiceImpl implements PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
     @Autowired
@@ -31,16 +34,27 @@ public class PedidoServiceImpl implements PedidoService{
     }
 
     @Override
-    public void inserir(Pedido pedido) {
-        salvarPedido(pedido);
+    public Pedido inserir(PedidoDTO pedidoDTO) {
+       return salvarPedido(pedidoDTO);
     }
 
     @Override
-    public void atualizar(long id, Pedido pedido) {
+    public Pedido atualizar(long id, PedidoDTO pedidoDTO) {
         Optional<Pedido> pedidoBd = pedidoRepository.findById(id);
         if (pedidoBd.isPresent()){
-            salvarPedido(pedido);
+           return salvarPedido(pedidoDTO);
         }
+        return null;
+    }
+
+    @Override
+    public Pedido atualizarStatusEntrega(long id, StatusEntrega status) {
+        Pedido pedidoBd = pedidoRepository.findById(id).orElse(null);
+        if (pedidoBd == null){return null;}
+
+        pedidoBd.setStatusEntrega(status);
+        return pedidoRepository.save(pedidoBd);
+
     }
 
     @Override
@@ -48,14 +62,17 @@ public class PedidoServiceImpl implements PedidoService{
         pedidoRepository.deleteById(id);
     }
 
-    private void salvarPedido(Pedido pedido){
-        String cep = pedido.getEnderecoEntrega().getCep();
+    private Pedido salvarPedido(PedidoDTO pedidoDTO){
+        Pedido pedido = new Pedido();
+        String cep = pedidoDTO.getEnderecoDTO().getCep();
         Endereco endereco = enderecoRepository.findById(cep).orElseGet(() -> {
             Endereco novoEndereco = viaCepService.consultarCep(cep);
             enderecoRepository.save(novoEndereco);
             return novoEndereco;
         });
+        pedido.setDetinatario(pedidoDTO.getDestinatario());
         pedido.setEnderecoEntrega(endereco);
-        pedidoRepository.save(pedido);
+        pedido.setStatusEntrega(StatusEntrega.RECEBIDO);
+       return pedidoRepository.save(pedido);
     }
 }

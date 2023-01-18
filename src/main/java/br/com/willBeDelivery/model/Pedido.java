@@ -11,6 +11,8 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String detinatario;
+    @Enumerated(EnumType.STRING)
+    private StatusEntrega statusEntrega;
     @ManyToOne
     private Endereco enderecoEntrega;
 }

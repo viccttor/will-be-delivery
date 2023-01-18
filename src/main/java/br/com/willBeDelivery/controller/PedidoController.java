@@ -1,42 +1,46 @@
 package br.com.willBeDelivery.controller;
 
 
+import br.com.willBeDelivery.dto.PedidoDTO;
 import br.com.willBeDelivery.model.Pedido;
 import br.com.willBeDelivery.service.PedidoService;
+import br.com.willBeDelivery.model.StatusEntrega;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("pedido")
 public class PedidoController {
 
     @Autowired
     private PedidoService pedidoService;
 
-    @GetMapping
+    @GetMapping("/buscarTodosPedidos")
     public ResponseEntity<Iterable<Pedido>> buscarTodos() {
         return ResponseEntity.ok(pedidoService.buscarTodos());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscarPedido/{id}")
     public ResponseEntity<Pedido> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(pedidoService.buscarPorId(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Pedido> inserir(@RequestBody Pedido pedido) {
-        pedidoService.inserir(pedido);
-        return ResponseEntity.ok(pedido);
+    @PostMapping("/inserirPedido")
+    public ResponseEntity<Pedido> inserir(@RequestBody PedidoDTO pedidoDTO) {
+        return ResponseEntity.ok(pedidoService.inserir(pedidoDTO));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Pedido> atualizar(@PathVariable Long id, @RequestBody Pedido pedido) {
-        pedidoService.atualizar(id, pedido);
-        return ResponseEntity.ok(pedido);
+    @PutMapping("/atualizarPedido/{id}")
+    public ResponseEntity<Pedido> atualizar(@PathVariable Long id, @RequestBody PedidoDTO pedidoDTO) {
+        return ResponseEntity.ok(pedidoService.atualizar(id, pedidoDTO));
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping("/atualizarStatusEntrega/{id}")
+    public ResponseEntity<Pedido> atualizarStatusEntrega(@PathVariable Long id, @RequestBody StatusEntrega status){
+        return ResponseEntity.ok(pedidoService.atualizarStatusEntrega(id, status));
+    }
+
+    @DeleteMapping("/deletarPedido/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         pedidoService.deletar(id);
         return ResponseEntity.ok().build();
