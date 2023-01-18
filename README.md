@@ -1,30 +1,213 @@
-# Read Me First
-The following was discovered as part of building this project:
+# Will Be Delivery
 
-* The JVM level was changed from '11' to '17', review the [JDK Version Range](https://github.com/spring-projects/spring-framework/wiki/Spring-Framework-Versions#jdk-version-range) on the wiki for more details.
+##  🛠 Tecnologias e Ferramentas
 
-# Getting Started
+* Java 11
+* Spring Boot
+* JPA Hibernate
+* H2
+* Swagger
+* Lombok
+* OpenFeign
+* Intellij
 
-### Reference Documentation
-For further reference, please consider the following sections:
 
-* [Official Apache Maven documentation](https://maven.apache.org/guides/index.html)
-* [Spring Boot Maven Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/3.0.1/maven-plugin/reference/html/)
-* [Create an OCI image](https://docs.spring.io/spring-boot/docs/3.0.1/maven-plugin/reference/html/#build-image)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#data.sql.jpa-and-spring-data)
-* [Spring Web](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#web)
-* [OpenFeign](https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/)
+##  Funcionalidades
 
-### Guides
-The following guides illustrate how to use some features concretely:
+* Pedido
+    * Criar um pedido
+    * Atualizar pedido
+    * Atualizar status de entrega
+    * Encontrar um pedido
+    * Listar pedidos
+    * deletar pedido
 
-* [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
-* [Building a RESTful Web Service](https://spring.io/guides/gs/rest-service/)
-* [Serving Web Content with Spring MVC](https://spring.io/guides/gs/serving-web-content/)
-* [Building REST services with Spring](https://spring.io/guides/tutorials/rest/)
 
-### Additional Links
-These additional references should also help you:
+### Pedido Controller
 
-* [Declarative REST calls with Spring Cloud OpenFeign sample](https://github.com/spring-cloud-samples/feign-eureka)
+| Rest   | URL                     | Função                                |
+|--------|-------------------------|---------------------------------------|
+| PUT    | /atualizarPedido        | Atualizar um pedido                   |
+| PATCH  | /atualizarStatusEntrega | Atualizar status de entrega do pedido |
+| GET    | /buscarPedido           | Buscar um pedido                      |
+| GET    | /buscarTodosPedidos     | Listar todos os pedidos               |
+| DELETE | /deletarPedido          | Deletar um pedido                     |
+| POST   | /inserirPedido          | Cadastrar um pedido                   |
+
+<br>
+
+![01]()
+
+## Utilizando a API 
+
+### Cadastrando um pedido 
+
+* No método Post - /inserirPedido
+<p>JSON para teste:</p>
+
+```
+{
+  "destinatario": "Nome do destinatario teste",
+  "enderecoDTO": {
+    "cep": "55819000"
+  }
+}
+```
+* Expectativa
+<p>Código HTPP: 200</p>
+<p>Corpo:</p>
+
+```
+{
+  "id": 1,
+  "detinatario": "Nome do destinatario teste",
+  "statusEntrega": "RECEBIDO",
+  "enderecoEntrega": {
+    "cep": "55819-000",
+    "logradouro": "Avenida Congresso Eucarístico Internacional",
+    "complemento": "até 99998 - lado par",
+    "bairro": "Bairro Novo",
+    "localidade": "Carpina",
+    "uf": "PE",
+    "ibge": "2604007",
+    "gia": "",
+    "ddd": "81",
+    "siafi": "2379"
+  }
+}
+```
+
+* No método PUT - /atualizarPedido
+
+<p>Parâmetro - ID</p>
+
+```
+ID: 1
+```
+
+<p>JSON para teste:</p>
+
+```
+{
+  "destinatario": "Nome do destinatario teste editado",
+  "enderecoDTO": {
+  "cep": "55818000"
+  }
+}
+```
+<p>Parâmentro - ENUM </p>
+
+```
+ENUM: Enviado
+```
+
+* Expectativa
+<p>Código HTPP: 200</p>
+<p>Corpo:</p>
+
+```
+{
+  "id": 1,
+  "detinatario": "Nome do destinatario teste editado",
+  "statusEntrega": "ENVIADO",
+  "enderecoEntrega": {
+    "cep": "55819-000",
+    "logradouro": "Avenida Congresso Eucarístico Internacional",
+    "complemento": "até 99998 - lado par",
+    "bairro": "Bairro Novo",
+    "localidade": "Carpina",
+    "uf": "PE",
+    "ibge": "2604007",
+    "gia": "",
+    "ddd": "81",
+    "siafi": "2379"
+  }
+}
+```
+
+* No método GET - /buscarPedido
+<p>Parâmetro - ID</p>
+
+```
+ID: 1
+```
+* Expectativa
+<p>Código HTPP: 200</p>
+<p>Corpo:</p>
+
+```
+{
+  "id": 1,
+  "detinatario": "Nome do destinatario teste editado",
+  "statusEntrega": "ENVIADO",
+  "enderecoEntrega": {
+    "cep": "55819-000",
+    "logradouro": "Avenida Congresso Eucarístico Internacional",
+    "complemento": "até 99998 - lado par",
+    "bairro": "Bairro Novo",
+    "localidade": "Carpina",
+    "uf": "PE",
+    "ibge": "2604007",
+    "gia": "",
+    "ddd": "81",
+    "siafi": "2379"
+  }
+}
+```
+
+* No método PATCH - /atualizarStatusEntrega
+
+<p>Parâmetro - ID</p>
+
+```
+ID: 1
+```
+
+<p>Parâmentro - ENUM </p>
+
+```
+ENUM: ENTREGUE
+```
+
+* Expectativa
+<p>Código HTPP: 200</p>
+<p>Corpo:</p>
+
+```
+{
+  "id": 1,
+  "detinatario": "Nome do destinatario teste editado",
+  "statusEntrega": "ENTREGUE",
+  "enderecoEntrega": {
+    "cep": "55819-000",
+    "logradouro": "Avenida Congresso Eucarístico Internacional",
+    "complemento": "até 99998 - lado par",
+    "bairro": "Bairro Novo",
+    "localidade": "Carpina",
+    "uf": "PE",
+    "ibge": "2604007",
+    "gia": "",
+    "ddd": "81",
+    "siafi": "2379"
+  }
+}
+
+```
+
+* No método DELETE - /deletarPedido
+<p>Parâmetro - ID</p>
+
+```
+ID: 1
+```
+
+* No método Post - /buscarTodosPedidos
+* Expectativa
+<p>Código HTPP: 200</p>
+<p>Response body:</p>
+
+```
+[]
+```
+
 
